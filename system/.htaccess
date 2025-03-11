@@ -1,0 +1,19 @@
+<IfModule authz_core_module>
+	Require all denied
+</IfModule>
+<IfModule !authz_core_module>
+	Deny from all
+</IfModule>
+
+<!-- <IfModule mod_rewrite.c>
+	RewriteEngine On
+
+	# Hapus 'index.php' dari URL
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_FILENAME} !-d
+	RewriteRule ^(.*)$ index.php/$1 [L]
+
+	# Jika ada masalah dengan redirect HTTPS, gunakan ini:
+	# RewriteCond %{HTTPS} !=on
+	# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule> -->
