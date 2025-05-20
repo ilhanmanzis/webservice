@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Classes as ModelsClasses;
 use App\Models\Materials;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class Classes extends Controller
 {
@@ -21,6 +22,7 @@ class Classes extends Controller
         if (request()->header('If-None_Match') === $etag) {
             return response('', 304)->header('ETag', $etag);
         }
+        Cache::put($etag, $classes, now()->addMinutes(300));
         $result = $classes->map(function ($class) {
             return [
                 'class_id' => $class->class_id,
@@ -74,6 +76,7 @@ class Classes extends Controller
         if (request()->header('If-None_Match') === $etag) {
             return response('', 304)->header('ETag', $etag);
         }
+        Cache::put($etag, $data, now()->addMinutes(300));
 
         if (!$data) {
             return response()->json([

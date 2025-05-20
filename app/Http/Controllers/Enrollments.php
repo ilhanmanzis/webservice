@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Enrollments as ModelsEnrollments;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -87,6 +88,8 @@ class Enrollments extends Controller
         if (request()->header('If-None_Match') === $etag) {
             return response('', 304)->header('ETag', $etag);
         }
+
+        Cache::put($etag, $user, now()->addMinutes(300));
         if (!$user) {
             return response()->json([
                 'status' => false,

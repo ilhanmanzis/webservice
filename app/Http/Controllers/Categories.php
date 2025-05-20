@@ -22,7 +22,7 @@ class Categories extends Controller
             return response('', 304)->header('ETag', $etag);
         }
 
-        Cache::put('categories_all', $data, now()->addMinutes(5));
+        Cache::put($etag, $data, now()->addMinutes(300));
         return response()->json([
             'status'    => true,
             'message'   => 'List Categories',
@@ -58,6 +58,7 @@ class Categories extends Controller
         if (request()->header('If-None_Match') === $etag) {
             return response('', 304)->header('ETag', $etag);
         }
+        Cache::put($etag, $data, now()->addMinutes(300));
         if (!$data) {
             return response()->json([
                 'status' => false,

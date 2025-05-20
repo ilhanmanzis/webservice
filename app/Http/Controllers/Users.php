@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -47,6 +48,7 @@ class Users extends Controller
             return response('', 304)->header('ETag', $etag);
         }
 
+        Cache::put($etag, $data, now()->addMinutes(300));
         return response()->json([
             'took' => $_SERVER['REQUEST_TIME_FLOAT'],
             'code' => 200,
@@ -73,6 +75,7 @@ class Users extends Controller
         if (request()->header('If-None_Match') === $etag) {
             return response('', 304)->header('ETag', $etag);
         }
+        Cache::put($etag, $user, now()->addMinutes(300));
 
         return response()->json([
             'took' => $_SERVER['REQUEST_TIME_FLOAT'],

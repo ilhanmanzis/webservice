@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Teachers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class Teacher extends Controller
 {
@@ -19,6 +20,7 @@ class Teacher extends Controller
         if (request()->header('If-None_Match') === $etag) {
             return response('', 304)->header('ETag', $etag);
         }
+        Cache::put($etag, $data, now()->addMinutes(300));
         $result = $data->map(function ($teacher) {
             return [
                 'teacher_id' => $teacher->teacher_id,
@@ -75,6 +77,7 @@ class Teacher extends Controller
                 'message' => 'Teacher not found'
             ], 404);
         }
+        Cache::put($etag, $data, now()->addMinutes(300));
         return response()->json([
             'status' => true,
             'message' => 'Teacher is found',

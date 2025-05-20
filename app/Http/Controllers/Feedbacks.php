@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Feedbacks as ModelsFeedbacks;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class Feedbacks extends Controller
 {
@@ -19,6 +20,7 @@ class Feedbacks extends Controller
         if (request()->header('If-None_Match') === $etag) {
             return response('', 304)->header('ETag', $etag);
         }
+        Cache::put($etag, $feedbacks, now()->addMinutes(300));
 
         if ($feedbacks->isEmpty()) {
             return response()->json([
@@ -125,6 +127,7 @@ class Feedbacks extends Controller
             return response('', 304)->header('ETag', $etag);
         }
 
+        Cache::put($etag, $feedback, now()->addMinutes(300));
         if ($feedback->isEmpty()) {
             return response()->json([
                 'took' => $_SERVER['REQUEST_TIME_FLOAT'],

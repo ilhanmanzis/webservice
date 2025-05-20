@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Materials as ModelsMaterials;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class Materials extends Controller
 {
@@ -20,6 +21,7 @@ class Materials extends Controller
             return response('', 304)->header('ETag', $etag);
         }
 
+        Cache::put($etag, $materials, now()->addMinutes(300));
         if (!$materials) {
             return response()->json([
                 'status' => false,
@@ -83,6 +85,8 @@ class Materials extends Controller
         if (request()->header('If-None_Match') === $etag) {
             return response('', 304)->header('ETag', $etag);
         }
+
+        Cache::put($etag, $data, now()->addMinutes(300));
 
         if (!$data) {
             return response()->json([
